@@ -6,7 +6,7 @@ DiaLights is a Nanoleaf inspired DIY project that stemmed from an interest in Ar
 ## Overview
 DiaLights is a set of 3 diamond-shaped panels with strip LEDs lining the insire of the frames. The frames were developed using Autodesk AutoCAD and 3D printed. The panels each consist of 3 layers: a light diffuser to soften LEDs, the 3D printed frame, and a reflective backing to ensure smoothing lighting. 
 
-Arduino Nano is used to control the lights. The DF-robot Bluetooth component connected to the Arduino communicates with mobile app Blynk. 
+Arduino Nano is used to control the lights using the [FastLED](https://github.com/FastLED/FastLED) library. The Bluetooth component connected to the Arduino communicates with mobile app Blynk. 
 
 Prior iteration of the project included an IR sensor to allow control with a physical remote. This was removed due to usability issues and a mobile app was swapped in favor of convienence.
 
