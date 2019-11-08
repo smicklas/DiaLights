@@ -3,6 +3,8 @@ Nanoleaf inspired DIY using Arduino Nano, Blynk, and FastLED library
 
 DiaLights is a Nanoleaf inspired DIY project that stemmed from an interest in Arduino development and wanting Nanoleaf without the price tag. 
 
+:heart: Made in Michigan :heart:
+
 ## Overview
 DiaLights is a set of 3 diamond-shaped panels with strip LEDs lining the insire of the frames. The frames were developed using Autodesk AutoCAD and 3D printed. The panels each consist of 3 layers: a light diffuser to soften LEDs, the 3D printed frame, and a reflective backing to ensure smoothing lighting. 
 
@@ -18,4 +20,7 @@ Prior iteration of the project included an IR sensor to allow control with a phy
 - [Blynk mobile app](https://blynk.io/) (free with premium + paid features)
 
 ## Schematics & Drawings
-Coming soon! 
+### Blynk configuration 
+<img src="https://i.imgur.com/rtn2cSx.png" alt="Blynk configuration for DiaLights" width="187" height="341" />
+
+More coming soon! 
