@@ -17,5 +17,5 @@ Prior iteration of the project included an IR sensor to allow control with a phy
 - [Bluetooth 2.0 Module](https://www.dfrobot.com/product-360.html "Bluetooth 2.0 Module") 
 - [Blynk mobile app](https://blynk.io/) (free with premium + paid features)
 
-##Schematics & Drawings
+## Schematics & Drawings
 Coming soon! 
