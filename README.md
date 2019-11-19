@@ -18,6 +18,8 @@ Prior iteration of the project included an IR sensor to allow control with a phy
 - 3D printed frames (used local Makerspace and [Treatstock](https://www.treatstock.com/))
 - [Bluetooth 2.0 Module](https://www.dfrobot.com/product-360.html "Bluetooth 2.0 Module") 
 - [Blynk mobile app](https://blynk.io/) (free with premium + paid features)
+- Wax paper (diffuser)
+- [Transparency film](https://www.amazon.com/OHP-Film-Overhead-Projector-Transparency/dp/B078QYKNKG) (diffuser)
 
 ## Schematics & Drawings
 ### Blynk configuration 
