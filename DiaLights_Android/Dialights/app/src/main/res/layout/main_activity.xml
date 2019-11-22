@@ -28,81 +28,132 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="TextView"
+        android:text="@string/connected_device_lbl"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/select_device_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="16dp"
-        android:text="Select device"
-        app:backgroundTint="@color/colorAccent"
+        android:text="@string/select_device_btn_lbl"
+        android:textColor="#000000"
+        app:backgroundTint="@color/colorPrimaryLight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/top_left_btn"
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginStart="128dp"
-        android:layout_marginBottom="372dp"
+        android:layout_marginBottom="428dp"
         android:background="@android:drawable/btn_default"
+        android:insetLeft="0dp"
         android:insetTop="0dp"
+        android:insetRight="0dp"
         android:insetBottom="0dp"
         android:rotation="45"
         android:singleLine="true"
-        app:backgroundTint="@color/colorAccent"
-        app:iconPadding="0dp"
+        app:backgroundTint="@color/colorPrimaryLight"
+        app:elevation="0.6dp"
+        app:iconPadding="0.6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/colorPrimaryDark"
-        app:strokeWidth="2dp" />
+        app:strokeColor="@color/colorPrimaryDark" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/right_btn"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginEnd="66dp"
-        android:layout_marginBottom="280dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginBottom="335dp"
         android:background="@android:drawable/btn_default"
+        android:insetLeft="0dp"
         android:insetTop="0dp"
+        android:insetRight="0dp"
         android:insetBottom="0dp"
         android:rotation="45"
-        android:shadowColor="#00FFFFFF"
         android:singleLine="true"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/colorPrimaryLight"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.989"
-        app:layout_constraintStart_toStartOf="@+id/top_left_btn"
-        app:layout_constraintTop_toTopOf="@+id/low_left_btn"
-        app:layout_constraintVertical_bias="1.0"
-        app:strokeColor="@color/colorPrimaryDark"
-        app:strokeWidth="2dp" />
+        app:layout_constraintStart_toStartOf="@+id/low_left_btn"
+        app:strokeColor="@color/colorPrimaryDark" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/low_left_btn"
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginStart="128dp"
-        android:layout_marginBottom="188dp"
+        android:layout_marginBottom="240dp"
         android:background="@android:drawable/btn_default"
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:rotation="45"
         android:singleLine="true"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/colorPrimaryLight"
+        app:elevation="200dp"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/colorPrimaryDark"
-        app:strokeWidth="2dp" />
+        app:strokeColor="@color/colorPrimaryDark" />
 
+    <Switch
+        android:id="@+id/power_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:layout_marginBottom="60dp"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/power_off_img" />
+
+    <Switch
+        android:id="@+id/twinkle_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:layout_marginStart="74dp"
+        android:checked="true"
+        app:layout_constraintBottom_toTopOf="@+id/power_switch"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/power_off_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="68dp"
+        android:tint="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/power_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_power_off_24px"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/power_on_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="68dp"
+        android:tint="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/power_switch"
+        app:srcCompat="@drawable/ic_power_24px"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/twinkle_on_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="19dp"
+        android:tint="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toTopOf="@+id/power_on_img"
+        app:layout_constraintStart_toEndOf="@+id/twinkle_switch"
+        app:srcCompat="@drawable/ic_flare_24px"
+        tools:ignore="VectorDrawableCompat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

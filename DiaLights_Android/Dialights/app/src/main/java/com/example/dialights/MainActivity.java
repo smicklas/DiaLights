@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.CompoundButton;
 
 
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
@@ -34,20 +36,24 @@ public class MainActivity extends AppCompatActivity {
     Button btnUpLeft;
     Button btnLowLeft;
     Button btnRight;
+    Switch powerSwitch;
+    Switch twinkleSwitch;
     TextView connectionStatus;
     ListView devices;
 
-    int[] red = {255, 0, 0};
-    int[] blue = {0, 255, 0};
-    int[] green = {0, 0, 255};
+    //First panel represented with red[0], green[0], blue[0]
+    int[] red = {255, 255, 255};
+    int[] blue = {0, 0, 0};
+    int[] green = {0, 0, 0};
 
     //Bluetooth
     private BluetoothAdapter bluetoothAdapter = null;
     private Set<BluetoothDevice> pairedDevices;
-    public static String EXTRA_ADDRESS = "device_address";
     BluetoothAdapter myBluetooth = null;
     BluetoothSocket btSocket = null;
     private boolean isBtConnected = false;
+    private boolean power = false;
+    private boolean twinkle = false;
     String address = null;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -69,24 +75,23 @@ public class MainActivity extends AppCompatActivity {
         btnRight = (Button) findViewById(R.id.right_btn);
         btnLowLeft = (Button) findViewById(R.id.low_left_btn);
         connectionStatus = (TextView) findViewById(R.id.connection_status);
+        twinkleSwitch = (Switch) findViewById(R.id.twinkle_switch);
+        powerSwitch = (Switch) findViewById(R.id.power_switch);
+
+        //Set switches off & disable until device is connected
+        powerSwitch.setChecked(power);
+        twinkleSwitch.setChecked(twinkle);
+        powerSwitch.setEnabled(false);
+        twinkleSwitch.setEnabled(false);
+
 
         //Establish button behavior
+        //If no Bluetooth is connected, show toast and don't allow user to select color
         btnUpLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isBtConnected){
-                    setUpLeftColor();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        btnLowLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isBtConnected){
-                    setLowLeftColor();
+                    setPanelColor(0);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
                 }
@@ -97,12 +102,52 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isBtConnected){
-                    setRightColor();
+                    setPanelColor(1);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
                 }
             }
         });
+
+        btnLowLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isBtConnected){
+                    setPanelColor(2);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        powerSwitch.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isBtConnected){
+                            //send power signal
+                        }
+                    }
+                });
+
+        twinkleSwitch.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isBtConnected){
+                            //send twinkle signal
+                        }
+                    }
+                });
+
+        //powerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                   //@Override
+                                                   //public void onCheckedChanged(CompoundButton compoundButton, boolean power) {
+                                                       //TO DO - can't turn on until connected
+                                                       //TO DO - create method to turn on/off lights
+                                              //     }
+                                              // });
+
 
         //Check if device has bluetooth
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -121,10 +166,10 @@ public class MainActivity extends AppCompatActivity {
                 pairedDevicesList();
             }
         });
+
     }
 
     private void pairedDevicesList() {
-
         pairedDevices = bluetoothAdapter.getBondedDevices();
         ArrayList list = new ArrayList();
 
@@ -157,127 +202,59 @@ public class MainActivity extends AppCompatActivity {
 
                 dialog.dismiss();
                 connectDevice(devices, address);
-
             }
-        }); //Method called when the device from the list is clicked
+        });
     }
 
     private void connectDevice(ListView devices, String address) {
         new ConnectBT().execute();
     }
 
-    //Frame 1
-    private void setUpLeftColor(){
+
+    //Send control signals to the panels (selecting static color)
+    private void setPanelColor(final int panel_no){
         if(btSocket != null){
-                //color picker
-                final ColorPicker cp = new ColorPicker(MainActivity.this, red[0], green[0], blue[0]);
-                cp.show();
-                cp.setCallback(new ColorPickerCallback() {
-                    @Override
-                    public void onColorChosen(int color) {
-                        red[0] = cp.getRed();
-                        green[0] = cp.getGreen();
-                        blue[0] = cp.getBlue();
-                        btnUpLeft.setBackgroundColor(Color.rgb(red[0], green[0], blue[0]));
-
-                        try {
-                            //Write the indicator for the panel, in this case "a"
-                            btSocket.getOutputStream().write("(".toString().getBytes()); //Initial char
-                            btSocket.getOutputStream().write("a".toString().getBytes()); //Panel identification char
-
-                            btSocket.getOutputStream().write("R".toString().getBytes()); //Red value
-                            btSocket.getOutputStream().write(Integer.toString(red[0]).getBytes());
-
-                            btSocket.getOutputStream().write("G".toString().getBytes()); //Green value
-                            btSocket.getOutputStream().write(Integer.toString(green[0]).getBytes());
-
-                            btSocket.getOutputStream().write("B".toString().getBytes()); //Blue value
-                            btSocket.getOutputStream().write(Integer.toString(blue[0]).getBytes());
-
-                            btSocket.getOutputStream().write(")".toString().getBytes()); //Terminating char
-                        } catch (IOException e){
-
-                        }
-                        cp.dismiss();
-                    }
-                });
-        }
-    }
-
-    private void setRightColor(){
-        if(btSocket != null){
-            //color picker
-            final ColorPicker cp = new ColorPicker(MainActivity.this, red[1], green[1], blue[1]);
+            //Show color picker
+            final ColorPicker cp = new ColorPicker(MainActivity.this, red[panel_no], green[panel_no], blue[panel_no]);
             cp.show();
             cp.setCallback(new ColorPickerCallback() {
                 @Override
                 public void onColorChosen(int color) {
-                    red[1] = cp.getRed();
-                    green[1] = cp.getGreen();
-                    blue[1] = cp.getBlue();
-                    btnRight.setBackgroundColor(Color.rgb(red[1], green[1], blue[1]));
+                    red[panel_no] = cp.getRed();
+                    green[panel_no] = cp.getGreen();
+                    blue[panel_no] = cp.getBlue();
+                    btnUpLeft.setBackgroundColor(Color.rgb(red[panel_no], green[panel_no], blue[panel_no]));
 
+                    //Try sending color control signals
                     try {
-                        //Write the indicator for the panel, in this case "b
                         btSocket.getOutputStream().write("(".toString().getBytes()); //Initial char
-                        btSocket.getOutputStream().write("b".toString().getBytes()); //Panel identification char
+                        btSocket.getOutputStream().write(Integer.toString(panel_no).getBytes()); //Panel indicator
 
                         btSocket.getOutputStream().write("R".toString().getBytes()); //Red value
-                        btSocket.getOutputStream().write(Integer.toString(red[1]).getBytes());
+                        btSocket.getOutputStream().write(Integer.toString(red[panel_no]).getBytes());
 
                         btSocket.getOutputStream().write("G".toString().getBytes()); //Green value
-                        btSocket.getOutputStream().write(Integer.toString(green[1]).getBytes());
+                        btSocket.getOutputStream().write(Integer.toString(green[panel_no]).getBytes());
 
                         btSocket.getOutputStream().write("B".toString().getBytes()); //Blue value
-                        btSocket.getOutputStream().write(Integer.toString(blue[1]).getBytes());
+                        btSocket.getOutputStream().write(Integer.toString(blue[panel_no]).getBytes());
 
                         btSocket.getOutputStream().write(")".toString().getBytes()); //Terminating char
-                    } catch (IOException e){
 
+                        //If the signal was sent & bluetooth is connected, assume they changed colors & are on
+                        power = true;
+                        powerSwitch.setChecked(true);
+                    } catch (IOException e){
+                        Toast.makeText(getApplicationContext(), "A bluetooth communication error has occurred.", Toast.LENGTH_LONG).show();
                     }
                     cp.dismiss();
                 }
             });
+
         }
     }
 
-    private void setLowLeftColor(){
-        if(btSocket != null){
-            //color picker
-            final ColorPicker cp = new ColorPicker(MainActivity.this, red[2], green[2], blue[2]);
-            cp.show();
-            cp.setCallback(new ColorPickerCallback() {
-                @Override
-                public void onColorChosen(int color) {
-                    red[2] = cp.getRed();
-                    green[2] = cp.getGreen();
-                    blue[2] = cp.getBlue();
-                    btnLowLeft.setBackgroundColor(Color.rgb(red[2], green[2], blue[2]));
-
-                    try {
-                        //Write the indicator for the panel, in this case "c"
-                        btSocket.getOutputStream().write("(".toString().getBytes()); //Initial char
-                        btSocket.getOutputStream().write("c".toString().getBytes()); //Panel identification char
-
-                        btSocket.getOutputStream().write("R".toString().getBytes()); //Red value
-                        btSocket.getOutputStream().write(Integer.toString(red[2]).getBytes());
-
-                        btSocket.getOutputStream().write("G".toString().getBytes()); //Green value
-                        btSocket.getOutputStream().write(Integer.toString(green[2]).getBytes());
-
-                        btSocket.getOutputStream().write("B".toString().getBytes()); //Blue value
-                        btSocket.getOutputStream().write(Integer.toString(blue[2]).getBytes());
-
-                        btSocket.getOutputStream().write(")".toString().getBytes()); //Terminating char
-                    } catch (IOException e){
-
-                    }
-                    cp.dismiss();
-                }
-            });
-        }
-    }
-
+    //Connecting to Bluetooth
     private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
     {
         private boolean ConnectSuccess = true; //if it's here, it's almost connected
@@ -306,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
+        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went okay
         {
             super.onPostExecute(result);
 
@@ -317,6 +294,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
                 isBtConnected = true;
                 connectionStatus.setText(address);
+                twinkleSwitch.setEnabled(true);
+                powerSwitch.setEnabled(true);
             }
             progress.dismiss();
         }
