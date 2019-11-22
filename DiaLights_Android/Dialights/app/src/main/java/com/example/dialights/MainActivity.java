@@ -125,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if(isBtConnected){
-                            //send power signal
+                            power = !power; //NEED A LISTENER FOR THE SWITCH TOGGLE?
+                            sendSingleCommand(4);
                         }
                     }
                 });
@@ -135,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if(isBtConnected){
+                            //5 is twinkle control
+                            sendSingleCommand(5);
                             //send twinkle signal
                         }
                     }
@@ -210,6 +213,17 @@ public class MainActivity extends AppCompatActivity {
         new ConnectBT().execute();
     }
 
+    private void sendSingleCommand(final int command_type){
+        if(btSocket != null){
+            try {
+                btSocket.getOutputStream().write("(".toString().getBytes()); //Initial char
+                btSocket.getOutputStream().write(Integer.toString(command_type).getBytes()); //Command indicator
+                btSocket.getOutputStream().write(")".toString().getBytes()); //Terminating char
+            } catch (IOException e){
+                Toast.makeText(getApplicationContext(), "A bluetooth communication error has occurred.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     //Send control signals to the panels (selecting static color)
     private void setPanelColor(final int panel_no){

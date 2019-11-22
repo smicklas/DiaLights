@@ -49,8 +49,9 @@
         android:id="@+id/top_left_btn"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginBottom="428dp"
+        android:layout_marginStart="141dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="57dp"
         android:background="@android:drawable/btn_default"
         android:insetLeft="0dp"
         android:insetTop="0dp"
@@ -60,10 +61,10 @@
         android:singleLine="true"
         app:backgroundTint="@color/colorPrimaryLight"
         app:elevation="0.6dp"
-        app:iconPadding="0.6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:iconPadding="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/low_left_btn"
+        app:layout_constraintEnd_toStartOf="@+id/right_btn"
+        app:layout_constraintHorizontal_bias="0.045"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@color/colorPrimaryDark" />
 
@@ -71,8 +72,8 @@
         android:id="@+id/right_btn"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginBottom="335dp"
+        android:layout_marginTop="91dp"
+        android:layout_marginEnd="56dp"
         android:background="@android:drawable/btn_default"
         android:insetLeft="0dp"
         android:insetTop="0dp"
@@ -81,16 +82,17 @@
         android:rotation="45"
         android:singleLine="true"
         app:backgroundTint="@color/colorPrimaryLight"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/low_left_btn"
+        app:iconPadding="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/top_left_btn"
         app:strokeColor="@color/colorPrimaryDark" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/low_left_btn"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginBottom="240dp"
+        android:layout_marginEnd="92dp"
+        android:layout_marginBottom="253dp"
         android:background="@android:drawable/btn_default"
         android:insetTop="0dp"
         android:insetBottom="0dp"
@@ -100,7 +102,7 @@
         app:elevation="200dp"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/right_btn"
         app:strokeColor="@color/colorPrimaryDark" />
 
     <Switch
@@ -155,5 +157,18 @@
         app:layout_constraintStart_toEndOf="@+id/twinkle_switch"
         app:srcCompat="@drawable/ic_flare_24px"
         tools:ignore="VectorDrawableCompat" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="86dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginBottom="112dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_sync_alt_24px"
+        android:tint="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toBottomOf="@+id/low_left_btn"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
