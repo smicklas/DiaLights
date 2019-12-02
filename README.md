@@ -26,8 +26,8 @@ Prior iteration of the project included an IR sensor to allow control with a phy
 <img src="https://i.imgur.com/rtn2cSx.png" alt="Blynk configuration for DiaLights" width="187" height="341" />
 
 ### DiaLights Android Screencaps
-<img src="https://i.imgur.com/Apk7QmH.png" alt="Initial screen for DiaLights" width="187" height="341" />
-<img src="https://i.imgur.com/reKj9Bb.png" alt="Color picker for DiaLights" width="187" height="341" />
-<img src="https://i.imgur.com/zfPpHmL.png" alt="Color selected for DiaLights" width="187" height="341" />
+<img src="https://i.imgur.com/4nvSVHA.png" alt="Initial screen for DiaLights" width="187" height="341" />
+<img src="https://i.imgur.com/IgJpLYa.png" alt="Color picker for DiaLights" width="187" height="341" />
+<img src="https://i.imgur.com/lSjNPut.png" alt="Color selected for DiaLights" width="187" height="341" />
 
 More coming soon! 
