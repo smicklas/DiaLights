@@ -159,7 +159,7 @@
         tools:ignore="VectorDrawableCompat" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/sync_panels_btn"
         android:layout_width="86dp"
         android:layout_height="80dp"
         android:layout_marginStart="80dp"

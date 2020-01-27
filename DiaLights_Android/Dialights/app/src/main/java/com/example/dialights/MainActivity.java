@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
@@ -36,15 +37,17 @@ public class MainActivity extends AppCompatActivity {
     Button btnUpLeft;
     Button btnLowLeft;
     Button btnRight;
+    ImageButton btnSync;
     Switch powerSwitch;
     Switch twinkleSwitch;
     TextView connectionStatus;
     ListView devices;
 
     //First panel represented with red[0], green[0], blue[0]
-    int[] red = {255, 255, 255};
-    int[] blue = {0, 0, 0};
-    int[] green = {0, 0, 0};
+    //Last item in each array used for setting color of all panels
+    int[] red = {255, 255, 255, 255};
+    int[] blue = {0, 0, 0, 0};
+    int[] green = {0, 0, 0, 0};
 
     //Bluetooth
     private BluetoothAdapter bluetoothAdapter = null;
@@ -77,11 +80,13 @@ public class MainActivity extends AppCompatActivity {
         connectionStatus = (TextView) findViewById(R.id.connection_status);
         twinkleSwitch = (Switch) findViewById(R.id.twinkle_switch);
         powerSwitch = (Switch) findViewById(R.id.power_switch);
+        btnSync = (ImageButton) findViewById(R.id.sync_panels_btn);
 
         //Set switches off & disable until device is connected
         powerSwitch.setChecked(power);
         twinkleSwitch.setChecked(twinkle);
         powerSwitch.setEnabled(false);
+        powerSwitch.setChecked(false);
         twinkleSwitch.setEnabled(false);
 
 
@@ -91,10 +96,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isBtConnected){
-                    setPanelColor(0);
+                    setPanelColor(0, btnUpLeft);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
                 }
+
             }
         });
 
@@ -102,10 +108,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isBtConnected){
-                    setPanelColor(1);
+                    setPanelColor(1, btnRight);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
                 }
+
             }
         });
 
@@ -113,10 +120,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isBtConnected){
-                    setPanelColor(2);
+                    setPanelColor(2, btnLowLeft);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
                 }
+
             }
         });
 
@@ -125,6 +133,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if(isBtConnected){
+                            if(power){
+                                btnLowLeft.setBackgroundColor(Color.rgb(0, 0,0));
+                                btnRight.setBackgroundColor(Color.rgb(0, 0,0));
+                                btnUpLeft.setBackgroundColor(Color.rgb(0, 0,0));
+                            }else{
+                                btnLowLeft.setBackgroundColor(Color.rgb(red[0], green[0], blue[0]));
+                                btnRight.setBackgroundColor(Color.rgb(red[1], green[1], blue[1]));
+                                btnUpLeft.setBackgroundColor(Color.rgb(red[2], green[2], blue[2]));
+                            }
                             power = !power; //NEED A LISTENER FOR THE SWITCH TOGGLE?
                             sendSingleCommand(4);
                         }
@@ -136,12 +153,37 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if(isBtConnected){
-                            //5 is twinkle control
+                            if(!twinkle){
+                                //If turning on twinkle, disable all buttons
+                                twinkleSwitch.setChecked(true);
+                                btnLowLeft.setEnabled(false);
+                                btnUpLeft.setEnabled(false);
+                                btnRight.setEnabled(false);
+                            }else{
+                                //If turning off twinkle, enable all buttons
+                                twinkleSwitch.setChecked(false);
+                                btnLowLeft.setEnabled(true);
+                                btnUpLeft.setEnabled(true);
+                                btnRight.setEnabled(true);
+                            }
+                            twinkle = !twinkle;
                             sendSingleCommand(5);
                             //send twinkle signal
                         }
                     }
                 });
+
+        btnSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isBtConnected){
+                    syncPanelColor();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please connect a device", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
 
         //powerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                    //@Override
@@ -202,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to connect to device", Toast.LENGTH_LONG).show();
                 }
-
                 dialog.dismiss();
                 connectDevice(devices, address);
             }
@@ -225,8 +266,52 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void syncPanelColor(){
+        if(btSocket != null){
+            //Show color picker
+            final ColorPicker cp = new ColorPicker(MainActivity.this, red[3], green[3], blue[3]);
+            cp.show();
+            cp.setCallback(new ColorPickerCallback() {
+                @Override
+                public void onColorChosen(int color) {
+                    red[3] = cp.getRed();
+                    green[3] = cp.getGreen();
+                    blue[3] = cp.getBlue();
+
+                    //Try sending color control signals
+                    try {
+                        btSocket.getOutputStream().write("(".toString().getBytes()); //Initial char
+                        btSocket.getOutputStream().write(Integer.toString(3).getBytes()); //Panel indicator
+
+                        btSocket.getOutputStream().write("R".toString().getBytes()); //Red value
+                        btSocket.getOutputStream().write(Integer.toString(red[3]).getBytes());
+
+                        btSocket.getOutputStream().write("G".toString().getBytes()); //Green value
+                        btSocket.getOutputStream().write(Integer.toString(green[3]).getBytes());
+
+                        btSocket.getOutputStream().write("B".toString().getBytes()); //Blue value
+                        btSocket.getOutputStream().write(Integer.toString(blue[3]).getBytes());
+
+                        btSocket.getOutputStream().write(")".toString().getBytes()); //Terminating char
+
+                        //If the signal was sent & bluetooth is connected, assume they changed colors & are on
+                        //TODO - Safe assumption?
+                        power = true;
+                        powerSwitch.setChecked(true);
+                    } catch (IOException e){
+                        Toast.makeText(getApplicationContext(), "A bluetooth communication error has occurred.", Toast.LENGTH_LONG).show();
+                    }
+                    btnUpLeft.setBackgroundColor(Color.rgb(red[3], green[3], blue[3]));
+                    btnLowLeft.setBackgroundColor(Color.rgb(red[3], green[3], blue[3]));
+                    btnRight.setBackgroundColor(Color.rgb(red[3], green[3], blue[3]));
+                    cp.dismiss();
+                }
+            });
+
+        }
+    }
     //Send control signals to the panels (selecting static color)
-    private void setPanelColor(final int panel_no){
+    private void setPanelColor(final int panel_no, final Button btn){
         if(btSocket != null){
             //Show color picker
             final ColorPicker cp = new ColorPicker(MainActivity.this, red[panel_no], green[panel_no], blue[panel_no]);
@@ -237,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
                     red[panel_no] = cp.getRed();
                     green[panel_no] = cp.getGreen();
                     blue[panel_no] = cp.getBlue();
-                    btnUpLeft.setBackgroundColor(Color.rgb(red[panel_no], green[panel_no], blue[panel_no]));
 
                     //Try sending color control signals
                     try {
@@ -256,11 +340,13 @@ public class MainActivity extends AppCompatActivity {
                         btSocket.getOutputStream().write(")".toString().getBytes()); //Terminating char
 
                         //If the signal was sent & bluetooth is connected, assume they changed colors & are on
+                        //TODO - Safe assumption?
                         power = true;
                         powerSwitch.setChecked(true);
                     } catch (IOException e){
                         Toast.makeText(getApplicationContext(), "A bluetooth communication error has occurred.", Toast.LENGTH_LONG).show();
                     }
+                    btn.setBackgroundColor(Color.rgb(red[panel_no], green[panel_no], blue[panel_no]));
                     cp.dismiss();
                 }
             });
@@ -285,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (btSocket == null || !isBtConnected) {
                     myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
+                    //TODO - Change this name v
                     BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
                     btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
